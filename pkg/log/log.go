@@ -1,36 +1,10 @@
 package log
 
 import (
-	"fmt"
-	"strings"
-
 	"time"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-)
-
-// type ILogger interface {
-// 	Infow(string, ...interface{})
-// 	Errorw(string, ...interface{})
-// 	Warnw(string, ...interface{})
-// 	Debugw(string, ...interface{})
-
-// 	Info(...interface{})
-// 	Error(...interface{})
-// 	Warn(...interface{})
-// 	Debug(...interface{})
-
-// 	Infof(string, ...interface{})
-// 	Errorf(string, ...interface{})
-// 	Warnf(string, ...interface{})
-// 	Debugf(string, ...interface{})
-// }
-
-const (
-	Info  string = "info"
-	Warn  string = "info"
-	Debug string = "info"
 )
 
 type ZapLogger struct {
@@ -95,27 +69,4 @@ func NewZapLogger(serviceName string, logLevel zapcore.Level) *ZapLogger {
 	return &ZapLogger{
 		sugar,
 	}
-}
-
-/*
-Possible values:
-ERROR, WARN, INFO, DEBUG
-*/
-func parseLogLevel(level string) zapcore.Level {
-	level = strings.ToUpper(level)
-	var newLevel zapcore.Level
-
-	switch level {
-	case "ERROR":
-		newLevel = zap.ErrorLevel
-	case "WARN":
-		newLevel = zap.WarnLevel
-	case "INFO":
-		newLevel = zap.InfoLevel
-	case "DEBUG":
-		newLevel = zap.DebugLevel
-	default:
-		panic(fmt.Sprintf("invalid log level %s", level))
-	}
-	return newLevel
 }
