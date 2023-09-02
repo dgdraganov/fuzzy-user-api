@@ -2,18 +2,19 @@ version: '3.3'
 
 # Define services
 services:
-  testing:
-    working_dir: /app
-    image: golang:1.21
-    ports:
-      - "9205:9205"
-    tty: true
-    container_name: fuzzy_testing
-    volumes: 
-      - ./:/app
+  # testing:
+  #   working_dir: /app
+  #   image: golang:1.21
+  #   ports:
+  #     - "9205:9205"
+  #   tty: true
+  #   container_name: fuzzy_testing
+  #   volumes: 
+  #     - ./:/app
   db:
     image: postgres:14.1-alpine
     restart: always
+    container_name: database
     environment:
       - POSTGRES_USER=fuzzy #also the default db
       - POSTGRES_PASSWORD=postgres
@@ -22,27 +23,18 @@ services:
     volumes: 
       - db:/var/lib/postgresql/data
   # App Service
-  # user-api:
-  #   # Configuration for building the docker image for the service
-  #   build:
-  #     context: . # Use an image built from the specified dockerfile in the current directory.
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "8080:8080" # Forward the exposed port 8080 on the container to port 8080 on the host machine
-  #   restart: unless-stopped
-  #   depends_on: 
-  #     - redis # This service depends on redis. Start that first.
-  #   environment: # Pass environment variables to the service
-  #     REDIS_URL: redis:6379    
-  #   networks: # Networks to join (Services on the same network can communicate with each other using their name)
-  #     - backend
-
-  # # Redis Service   
-  # redis:
-  #   image: "redis:alpine" # Use a public Redis image to build the redis service    
-  #   restart: unless-stopped
-  #   networks:
-  #     - backend
+  user-api:
+    container_name: fuzzy-user-api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "9205:9205" 
+    restart: unless-stopped
+    # environment: 
+    #   REDIS_URL: redis:6379
+    # networks: 
+    #   - backend
 volumes:
   db:
     driver: local

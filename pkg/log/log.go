@@ -52,13 +52,6 @@ func NewZapLogger(serviceName string, logLevel zapcore.Level) *ZapLogger {
 
 	logger := zap.New(core.Core(), zap.AddCaller())
 
-	// defer func() {
-	// 	err := logger.Sync()
-	// 	if err != nil {
-	// 		logger.Sugar().Info("logger sync completed")
-	// 	}
-	// }()
-
 	sugar := logger.Sugar()
 
 	// setting default fields

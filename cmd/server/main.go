@@ -36,6 +36,14 @@ func main() {
 	db := pg.NewPostgresDb(conf)
 	db.Connect()
 
+	http.HandleFunc("/test", func(w http.ResponseWriter, r *http.Request) {
+		b, err := w.Write([]byte(os.Getenv("DB_PORT")))
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println("bytes written ", b)
+	})
+
 	port := fmt.Sprintf(":%s", os.Getenv("APP_PORT"))
 	if err := http.ListenAndServe(port, nil); err != nil {
 		logger.Fatalln("")
