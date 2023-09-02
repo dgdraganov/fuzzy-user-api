@@ -7,11 +7,11 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-type ZapLogger struct {
-	*zap.SugaredLogger
-}
+// type ZapLogger struct {
+// 	*zap.SugaredLogger
+// }
 
-func NewZapLogger(serviceName string, logLevel zapcore.Level) *ZapLogger {
+func NewZapLogger(serviceName string, logLevel zapcore.Level) *zap.SugaredLogger {
 	atom := zap.NewAtomicLevel()
 	atom.SetLevel(logLevel)
 
@@ -59,7 +59,5 @@ func NewZapLogger(serviceName string, logLevel zapcore.Level) *ZapLogger {
 		"microservice", serviceName,
 	)
 
-	return &ZapLogger{
-		sugar,
-	}
+	return sugar
 }

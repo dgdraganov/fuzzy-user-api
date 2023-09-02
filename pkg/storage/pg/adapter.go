@@ -7,11 +7,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type Database struct {
-	config *DbConfig
-	pg     *gorm.DB
-}
-
+// DbConfig is a config type for the database construction
 type DbConfig struct {
 	Host     string
 	User     string
@@ -22,14 +18,20 @@ type DbConfig struct {
 	TimeZone string
 }
 
-func NewPostgresDb(config *DbConfig) *Database {
-	return &Database{
+type database struct {
+	config *DbConfig
+	pg     *gorm.DB
+}
+
+// NewDatabase is a constructor function for the database type
+func NewDatabase(config *DbConfig) *database {
+	return &database{
 		config: config,
 	}
 }
 
-func (db *Database) Connect() error {
-	// ex. "host=localhost user=gorm password=gorm dbname=gorm port=9920 sslmode=disable TimeZone=Europe/Sofia"
+// Connect initializes a gorm.DB object and connects to the postgres db
+func (db *database) Connect() error {
 	dsn := db.buildDSN()
 	pgdb, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
@@ -39,7 +41,12 @@ func (db *Database) Connect() error {
 	return nil
 }
 
-func (db *Database) buildDSN() string {
+func (db *database) Create(obj any) error {
+	result := db.pg.Create(obj)
+	return result.Error
+}
+
+func (db *database) buildDSN() string {
 	return fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%s sslmode=%s TimeZone=%s",
 		db.config.Host,
@@ -51,11 +58,3 @@ func (db *Database) buildDSN() string {
 		db.config.TimeZone,
 	)
 }
-
-/*
-
-
-dsn := "host=localhost user=gorm password=gorm dbname=gorm port=9920 sslmode=disable TimeZone=Asia/Shanghai"
-db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-
-*/
