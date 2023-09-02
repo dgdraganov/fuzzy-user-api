@@ -41,11 +41,11 @@ func (db *Database) Connect() error {
 
 func (db *Database) buildDSN() string {
 	return fmt.Sprintf(
-		"host=%s user=%s password=%s dbname=%s port=%s sslmode=%s TimeZone=%s",
+		"host=%s user=%s password=%s port=%s sslmode=%s TimeZone=%s",
 		db.config.Host,
 		db.config.User,
 		db.config.Password,
-		db.config.DbName,
+		//db.config.DbName,
 		db.config.Port,
 		db.config.SSLMode,
 		db.config.TimeZone,
