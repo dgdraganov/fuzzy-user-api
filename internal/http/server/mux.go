@@ -34,6 +34,10 @@ func NewHTTPServer() *httpServer {
 
 	db := pg.NewDatabase(conf)
 	db.Connect()
+	logger.Infow(
+		"initialized db connection",
+		"db_host", os.Getenv("DB_HOST"),
+	)
 
 	regHandler := register.NewRegisterHandler(logger, db)
 
@@ -50,6 +54,11 @@ func (s *httpServer) RegisterHandlers() {
 }
 
 func (s *httpServer) StartServer() {
+	s.logs.Infow(
+		"server starting...",
+		"app_port", os.Getenv("APP_PORT"),
+	)
+
 	port := fmt.Sprintf(":%s", os.Getenv("APP_PORT"))
 	if err := http.ListenAndServe(port, nil); err != nil {
 		s.logs.Fatalln("server stopped unexpectedly")

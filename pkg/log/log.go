@@ -56,7 +56,7 @@ func NewZapLogger(serviceName string, logLevel zapcore.Level) *zap.SugaredLogger
 
 	// setting default fields
 	sugar = sugar.With(
-		"microservice", serviceName,
+		"service", serviceName,
 	)
 
 	return sugar
