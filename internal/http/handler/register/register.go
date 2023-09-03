@@ -106,6 +106,13 @@ func (m *registerHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	m.logs.Infow(
+		"user registered successfully",
+		"request_id", requestID,
+		"user_id", user.ID,
+		"email", user.Email,
+	)
+
 	respMsg := model.SuccessResponse{
 		Title: "user registered successfully",
 	}

@@ -18,9 +18,3 @@ type RegisterDTO struct {
 	Email     string `json:"email" validate:"required,email"`
 	Password  string `json:"password" validate:"required"`
 }
-
-// type User struct {
-// 	gorm.Model
-// 	Email    string `gorm:"unique"`
-// 	Password string
-// }
