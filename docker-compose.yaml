@@ -26,16 +26,15 @@ services:
     #   REDIS_URL: redis:6379
     # networks: 
     #   - backend
-    
-  # testing:
-  #   working_dir: /app
-  #   image: golang:1.21
-  #   ports:
-  #     - "9205:9205"
-  #   tty: true
-  #   container_name: fuzzy_testing
-  #   volumes: 
-  #     - ./:/app
+  testing:
+    working_dir: /app
+    image: golang:1.21
+    ports:
+      - "9205:9205"
+    tty: true
+    container_name: fuzzy_testing
+    volumes: 
+      - ./:/app
 volumes:
   db:
     driver: local
