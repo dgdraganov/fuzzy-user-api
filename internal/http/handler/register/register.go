@@ -74,7 +74,7 @@ func (m *registerHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		)
 		errMsg := model.ErrorResponse{
 			Title: "user not registered",
-			Error: fmt.Sprintf("something went kaput on our end"),
+			Error: "something went kaput on our end",
 		}
 		if err := writeResponse(w, errMsg, http.StatusInternalServerError); err != nil {
 			m.logs.Errorw(
@@ -126,9 +126,9 @@ func prepareUserStruct(dto model.RegisterDTO) (model.User, error) {
 		return model.User{}, fmt.Errorf("bcrypt generate password hash: %w", err)
 	}
 
-	res.FirstName = res.FirstName
-	res.LastName = res.LastName
-	res.Email = res.Email
+	res.FirstName = dto.FirstName
+	res.LastName = dto.LastName
+	res.Email = dto.Email
 	res.PasswordHash = string(hs)
 	return res, nil
 }
