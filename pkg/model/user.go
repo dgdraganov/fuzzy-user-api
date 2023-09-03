@@ -6,10 +6,10 @@ import (
 
 type User struct {
 	gorm.Model
-	FirstName    string `gorm:"size:25;default:null;not null"`
-	LastName     string `gorm:"size:25;default:null;not null"`
-	Email        string `gorm:"unique"`
-	PasswordHash string `gorm:"default:null;not null"`
+	FirstName    string `gorm:"size:25;default:null;not null;type:text"`
+	LastName     string `gorm:"size:25;default:null;not null;type:text"`
+	Email        string `gorm:"unique;type:text"`
+	PasswordHash string `gorm:"default:null;not null;type:text"`
 }
 
 type RegisterDTO struct {
@@ -18,3 +18,9 @@ type RegisterDTO struct {
 	Email     string `json:"email" validate:"required,email"`
 	Password  string `json:"password" validate:"required"`
 }
+
+// type User struct {
+// 	gorm.Model
+// 	Email    string `gorm:"unique"`
+// 	Password string
+// }

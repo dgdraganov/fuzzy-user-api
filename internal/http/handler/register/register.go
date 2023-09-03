@@ -45,14 +45,14 @@ func (m *registerHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	dto, err := parseRequestBody(r.Body)
 	if err != nil {
-		m.logs.Warn(
+		m.logs.Warnw(
 			"parse request body failed",
 			"error", err,
 			"request_id", requestID,
 		)
 		errMsg := model.ErrorResponse{
 			Title: "user not registered",
-			Error: fmt.Sprintf("bad request"),
+			Error: "bad request",
 		}
 		if err := writeResponse(w, errMsg, http.StatusBadRequest); err != nil {
 			m.logs.Errorw(
@@ -61,6 +61,7 @@ func (m *registerHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				"request_id", requestID,
 			)
 		}
+
 		return
 	}
 
@@ -141,7 +142,10 @@ func parseRequestBody(b io.ReadCloser) (model.RegisterDTO, error) {
 	defer b.Close()
 	validate := validator.New()
 	err := validate.Struct(res)
-	return res, fmt.Errorf("validate struct: %w", err)
+	if err != nil {
+		return model.RegisterDTO{}, fmt.Errorf("validate struct: %w", err)
+	}
+	return res, nil
 }
 
 func writeResponse(w http.ResponseWriter, errMsg any, statusCode int) error {
@@ -151,11 +155,10 @@ func writeResponse(w http.ResponseWriter, errMsg any, statusCode int) error {
 		w.WriteHeader(http.StatusInternalServerError)
 		return fmt.Errorf("json marshal: %w", err)
 	}
+	w.WriteHeader(statusCode)
 	if _, err := w.Write(resp); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return fmt.Errorf("response write: %w", err)
 	}
-
-	w.WriteHeader(statusCode)
 	return nil
 }

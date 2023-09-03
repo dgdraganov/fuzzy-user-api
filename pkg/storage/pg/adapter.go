@@ -30,6 +30,13 @@ func NewDatabase(config *DbConfig) *database {
 	}
 }
 
+func (db *database) Migrate(dst ...interface{}) error {
+	if err := db.pg.AutoMigrate(dst...); err != nil {
+		return fmt.Errorf("auto migrate: %w", err)
+	}
+	return nil
+}
+
 // Connect initializes a gorm.DB object and connects to the postgres db
 func (db *database) Connect() error {
 	dsn := db.buildDSN()
