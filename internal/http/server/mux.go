@@ -54,6 +54,9 @@ func (s *httpServer) RegisterHandlers() {
 }
 
 func (s *httpServer) StartServer() {
+
+	s.RegisterHandlers()
+
 	s.logs.Infow(
 		"server starting...",
 		"app_port", os.Getenv("APP_PORT"),
