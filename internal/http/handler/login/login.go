@@ -8,7 +8,6 @@ import (
 
 type loginHandler struct {
 	logs *zap.SugaredLogger
-	repo UserRepository
 	jwt  JwtIssuer
 }
 

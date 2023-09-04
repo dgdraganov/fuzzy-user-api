@@ -1,5 +1,7 @@
 package register
 
-type UserRepository interface {
-	Create(obj any) error
+import "github.com/dgdraganov/fuzzy-user-api/pkg/model"
+
+type Registry interface {
+	RegisterUser(model.RegisterDTO) error
 }

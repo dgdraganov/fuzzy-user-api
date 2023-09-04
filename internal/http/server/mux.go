@@ -6,8 +6,8 @@ import (
 	"os"
 
 	"github.com/dgdraganov/fuzzy-user-api/internal/http/handler/register"
+	"github.com/dgdraganov/fuzzy-user-api/internal/http/middleware"
 	"github.com/dgdraganov/fuzzy-user-api/pkg/log"
-	"github.com/dgdraganov/fuzzy-user-api/pkg/middleware"
 	"github.com/dgdraganov/fuzzy-user-api/pkg/model"
 	"github.com/dgdraganov/fuzzy-user-api/pkg/storage/pg"
 	"go.uber.org/zap"
@@ -53,7 +53,7 @@ func NewHTTPServer() *httpServer {
 		"db_host", os.Getenv("DB_HOST"),
 	)
 
-	regHandler := register.NewRegisterHandler(logger, db)
+	regHandler := register.NewRegisterHandler(logger)
 
 	return &httpServer{
 		mux:      http.NewServeMux(),
