@@ -13,4 +13,5 @@ type Repository interface {
 type JwtIssuer interface {
 	Generate(*model.TokenInfo) *jwt.Token
 	Sign(token *jwt.Token) (string, error)
+	Validate(token string) (jwt.MapClaims, error)
 }

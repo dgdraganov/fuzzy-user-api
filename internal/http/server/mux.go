@@ -8,6 +8,7 @@ import (
 	"github.com/dgdraganov/fuzzy-user-api/internal/core"
 	"github.com/dgdraganov/fuzzy-user-api/internal/http/handler/login"
 	"github.com/dgdraganov/fuzzy-user-api/internal/http/handler/register"
+	"github.com/dgdraganov/fuzzy-user-api/internal/http/handler/verify"
 	"github.com/dgdraganov/fuzzy-user-api/internal/http/middleware"
 	"github.com/dgdraganov/fuzzy-user-api/pkg/jwt"
 	"github.com/dgdraganov/fuzzy-user-api/pkg/log"
@@ -21,6 +22,7 @@ type httpServer struct {
 	mux      *http.ServeMux
 	register http.Handler
 	login    http.Handler
+	verify   http.Handler
 	logs     *zap.SugaredLogger
 }
 
@@ -62,11 +64,13 @@ func NewHTTPServer() *httpServer {
 
 	regHandler := register.NewRegisterHandler(logger, fuzz)
 	loginHandler := login.NewRegisterHandler(logger, fuzz)
+	verifyHandler := verify.NewRegisterHandler(logger, fuzz)
 
 	return &httpServer{
 		mux:      http.NewServeMux(),
 		register: regHandler,
 		login:    loginHandler,
+		verify:   verifyHandler,
 		logs:     logger,
 	}
 }
@@ -77,6 +81,9 @@ func (s *httpServer) RegisterHandlers() {
 
 	// [POST]
 	s.mux.Handle("/api/login", middleware.SetContextRequestID(s.login))
+
+	// [GET]
+	s.mux.Handle("/api/verify", middleware.SetContextRequestID(s.verify))
 }
 
 func (s *httpServer) StartServer() {

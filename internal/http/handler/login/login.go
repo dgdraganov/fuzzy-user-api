@@ -66,11 +66,13 @@ func (m *loginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			"error", err,
 			"request_id", requestID,
 		)
-		msg := "login not successful"
+		msg := "internal server error"
+		status := http.StatusInternalServerError
 		if errors.Is(err, core.ErrInvalidPassword) {
-			msg = "uncorrect password"
+			msg = "incorrect password"
+			status = http.StatusOK
 		}
-		if err := common.WriteResponse(w, msg, http.StatusInternalServerError); err != nil {
+		if err := common.WriteResponse(w, msg, status); err != nil {
 			m.logs.Errorw(
 				"write response failed (login)",
 				"error", err,
@@ -99,7 +101,7 @@ func (m *loginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	m.logs.Infof(
+	m.logs.Infow(
 		"successfully loged in",
 		"jwt", token,
 		"email", dto.Email,

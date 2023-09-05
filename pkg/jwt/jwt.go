@@ -10,7 +10,6 @@ import (
 )
 
 var TimeNow = time.Now
-
 var ErrTokenNotValid error = errors.New("token is not valid")
 
 type jwtGenerator struct {
@@ -27,7 +26,7 @@ func (gen *jwtGenerator) Generate(data *model.TokenInfo) *jwt.Token {
 	token := jwt.New(jwt.SigningMethodHS512)
 
 	token.Header["typ"] = "JWT"
-	token.Header["alg"] = "HS256"
+	token.Header["alg"] = jwt.SigningMethodHS512.Name
 
 	claims := token.Claims.(jwt.MapClaims)
 	claims["sub"] = data.Subject
@@ -50,14 +49,14 @@ func (gen *jwtGenerator) Sign(token *jwt.Token) (string, error) {
 }
 
 func (gen *jwtGenerator) Validate(token string) (jwt.MapClaims, error) {
-	jwtToken, err := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
 
+	fmt.Println(token)
+	jwtToken, err := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
 		}
 		return gen.secret, nil
 	})
-
 	if err != nil {
 		return nil, fmt.Errorf("jwt parse: %w", err)
 	}
