@@ -3,6 +3,7 @@ package pg
 import (
 	"fmt"
 
+	"github.com/dgdraganov/fuzzy-user-api/pkg/model"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -51,6 +52,15 @@ func (db *database) Connect() error {
 func (db *database) Create(obj any) error {
 	result := db.pg.Create(obj)
 	return result.Error
+}
+
+func (db *database) GetUser(email string) (model.User, error) {
+	var user model.User
+	res := db.pg.Where("email = ?", email).First(&user)
+	if res.Error != nil {
+		return model.User{}, fmt.Errorf("db query: %w", res.Error)
+	}
+	return user, nil
 }
 
 func (db *database) buildDSN() string {

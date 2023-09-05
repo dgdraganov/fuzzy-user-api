@@ -9,7 +9,6 @@ import (
 )
 
 func SetContextRequestID(handler http.Handler) http.Handler {
-
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		requestID := uuid.New()
 		ctx := context.WithValue(r.Context(), model.RequestID, requestID.String())

@@ -1,7 +1,9 @@
 package login
 
-type UserRepository interface {
-}
+import (
+	"github.com/dgdraganov/fuzzy-user-api/pkg/model"
+)
 
-type JwtIssuer interface {
+type Registry interface {
+	LoginUser(dto model.LoginDTO) (string, error)
 }

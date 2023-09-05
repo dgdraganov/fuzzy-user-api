@@ -15,7 +15,7 @@ func (f *fuzzy) RegisterUser(dto model.RegisterDTO) error {
 		return fmt.Errorf("validate register dto: %w", err)
 	}
 
-	user, err := prepareUserRegister(dto)
+	user, err := f.prepareUserRegister(dto)
 	if err != nil {
 		return fmt.Errorf("prapare user register: %w", err)
 	}
@@ -26,16 +26,7 @@ func (f *fuzzy) RegisterUser(dto model.RegisterDTO) error {
 	return nil
 }
 
-func validateRegisterDTO(dto model.RegisterDTO) error {
-	validate := validator.New()
-	err := validate.Struct(dto)
-	if err != nil {
-		return fmt.Errorf("validate struct: %w", err)
-	}
-	return nil
-}
-
-func prepareUserRegister(dto model.RegisterDTO) (model.User, error) {
+func (f *fuzzy) prepareUserRegister(dto model.RegisterDTO) (model.User, error) {
 	var res model.User
 	hs, err := bcrypt.GenerateFromPassword([]byte(dto.Password), 10)
 	if err != nil {
@@ -46,4 +37,13 @@ func prepareUserRegister(dto model.RegisterDTO) (model.User, error) {
 	res.Email = dto.Email
 	res.PasswordHash = string(hs)
 	return res, nil
+}
+
+func validateRegisterDTO(dto model.RegisterDTO) error {
+	validate := validator.New()
+	err := validate.Struct(dto)
+	if err != nil {
+		return fmt.Errorf("validate struct: %w", err)
+	}
+	return nil
 }

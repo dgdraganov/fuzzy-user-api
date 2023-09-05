@@ -17,14 +17,14 @@ type jwtGenerator struct {
 	secret []byte
 }
 
-func NewJwtGenerator(method jwt.SigningMethod, jwtSecret []byte) *jwtGenerator {
+func NewJwtGenerator(jwtSecret []byte) *jwtGenerator {
 	return &jwtGenerator{
 		secret: jwtSecret,
 	}
 }
 
 func (gen *jwtGenerator) Generate(data *model.TokenInfo) *jwt.Token {
-	token := jwt.New(jwt.SigningMethodES256)
+	token := jwt.New(jwt.SigningMethodHS512)
 
 	token.Header["typ"] = "JWT"
 	token.Header["alg"] = "HS256"
@@ -32,10 +32,9 @@ func (gen *jwtGenerator) Generate(data *model.TokenInfo) *jwt.Token {
 	claims := token.Claims.(jwt.MapClaims)
 	claims["sub"] = data.Subject
 	claims["iat"] = TimeNow().Unix()
-	claims["exp"] = TimeNow().Unix() + int64(data.Expiration)
+	claims["exp"] = TimeNow().Unix() + int64(data.Expiration*3600)
 	claims["first_name"] = data.FirstName
 	claims["last_name"] = data.LastName
-	claims["user_id"] = data.UserID
 	claims["email"] = data.Email
 
 	return token
@@ -44,7 +43,7 @@ func (gen *jwtGenerator) Generate(data *model.TokenInfo) *jwt.Token {
 func (gen *jwtGenerator) Sign(token *jwt.Token) (string, error) {
 	tokenStr, err := token.SignedString(gen.secret)
 	if err != nil {
-		return "", fmt.Errorf("token signing: %w", err)
+		return "", fmt.Errorf("string signed: %w", err)
 	}
 
 	return tokenStr, nil
@@ -53,7 +52,7 @@ func (gen *jwtGenerator) Sign(token *jwt.Token) (string, error) {
 func (gen *jwtGenerator) Validate(token string) (jwt.MapClaims, error) {
 	jwtToken, err := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
 
-		if _, ok := t.Method.(*jwt.SigningMethodECDSA); !ok {
+		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
 		}
 		return gen.secret, nil
