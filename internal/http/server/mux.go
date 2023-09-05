@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/dgdraganov/fuzzy-user-api/internal/core"
 	"github.com/dgdraganov/fuzzy-user-api/internal/http/handler/register"
 	"github.com/dgdraganov/fuzzy-user-api/internal/http/middleware"
 	"github.com/dgdraganov/fuzzy-user-api/pkg/log"
@@ -53,7 +54,8 @@ func NewHTTPServer() *httpServer {
 		"db_host", os.Getenv("DB_HOST"),
 	)
 
-	regHandler := register.NewRegisterHandler(logger)
+	fuz := core.NewFuzzy(db)
+	regHandler := register.NewRegisterHandler(logger, fuz)
 
 	return &httpServer{
 		mux:      http.NewServeMux(),

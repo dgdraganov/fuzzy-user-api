@@ -10,15 +10,14 @@ import (
 )
 
 type registerHandler struct {
-	logs  *zap.SugaredLogger
-	fuzzy Registry
-	//repo UserRepository
+	logs     *zap.SugaredLogger
+	registry Registry
 }
 
-func NewRegisterHandler(logger *zap.SugaredLogger) *registerHandler {
+func NewRegisterHandler(logger *zap.SugaredLogger, reg Registry) *registerHandler {
 	return &registerHandler{
-		logs: logger,
-		//repo: userRepo,
+		logs:     logger,
+		registry: reg,
 	}
 }
 
@@ -56,7 +55,7 @@ func (m *registerHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := m.fuzzy.RegisterUser(dto); err != nil {
+	if err := m.registry.RegisterUser(dto); err != nil {
 		m.logs.Errorw(
 			"register user",
 			"error", err,
