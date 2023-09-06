@@ -12,7 +12,6 @@ FROM golang:1.21
 
 WORKDIR /app
 
-COPY --from=build /app/.env /app/.env
 COPY --from=build /app/fuzzy-user-api /app/fuzzy-user-api
 
 EXPOSE 9205

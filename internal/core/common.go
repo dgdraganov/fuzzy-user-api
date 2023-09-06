@@ -22,11 +22,11 @@ func NewFuzzy(db Repository, issuer JwtIssuer) *fuzzy {
 
 func (f *fuzzy) UserExists(email string) (bool, error) {
 	_, err := f.repo.GetUser(email)
-	if errors.Is(err, gorm.ErrDuplicatedKey) {
-		return true, nil
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return false, nil
 	}
 	if err != nil {
 		return false, fmt.Errorf("repo get user: %w", err)
 	}
-	return false, nil
+	return true, nil
 }

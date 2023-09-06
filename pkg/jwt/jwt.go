@@ -44,7 +44,6 @@ func (gen *jwtGenerator) Sign(token *jwt.Token) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("string signed: %w", err)
 	}
-
 	return tokenStr, nil
 }
 

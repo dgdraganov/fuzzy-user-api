@@ -17,7 +17,12 @@ func (f *fuzzy) LoginUser(dto model.LoginDTO) (string, error) {
 		return "", fmt.Errorf("validate login dto: %w", err)
 	}
 
-	info, err := f.prepareTokenInfo(dto)
+	user, err := f.repo.GetUser(dto.Email)
+	if err != nil {
+		return "", fmt.Errorf("get password hash: %w", err)
+	}
+
+	info, err := f.prepareTokenInfo(dto, user)
 	if err != nil {
 		return "", fmt.Errorf("prapare token info: %w", err)
 	}
@@ -39,13 +44,8 @@ func validateLoginDTO(dto model.LoginDTO) error {
 	return nil
 }
 
-func (f *fuzzy) prepareTokenInfo(dto model.LoginDTO) (model.TokenInfo, error) {
-	user, err := f.repo.GetUser(dto.Email)
-	if err != nil {
-		return model.TokenInfo{}, fmt.Errorf("get password hash: %w", err)
-	}
-
-	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(dto.Password))
+func (f *fuzzy) prepareTokenInfo(dto model.LoginDTO, user model.User) (model.TokenInfo, error) {
+	err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(dto.Password))
 	if errors.Is(err, bcrypt.ErrMismatchedHashAndPassword) {
 		return model.TokenInfo{}, ErrInvalidPassword
 	}

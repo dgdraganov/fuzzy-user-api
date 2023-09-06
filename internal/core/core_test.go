@@ -2,6 +2,7 @@ package core_test
 
 import (
 	"errors"
+	"fmt"
 	"testing"
 
 	"github.com/dgdraganov/fuzzy-user-api/internal/core"
@@ -43,7 +44,7 @@ func Test_UserExists_True(t *testing.T) {
 	repo := &repositoryMock{
 		getUser: func(email string) (model.User, error) {
 			if email == userEmail {
-				return model.User{}, gorm.ErrDuplicatedKey
+				return model.User{}, nil
 			}
 			return model.User{}, errors.New("unexpected error")
 		},
@@ -63,24 +64,98 @@ func Test_UserExists_True(t *testing.T) {
 	}
 }
 
-/*func (f *fuzzy) LoginUser(dto model.LoginDTO) (string, error) {
-err := validateLoginDTO(dto)
-if err != nil {
-	return "", fmt.Errorf("validate login dto: %w", err)
+func Test_UserExists_False(t *testing.T) {
+	userEmail := "test@test.com"
+	repo := &repositoryMock{
+		getUser: func(email string) (model.User, error) {
+			if email == userEmail {
+				return model.User{}, fmt.Errorf("mock error: %w", gorm.ErrRecordNotFound)
+			}
+			return model.User{}, errors.New("unexpected error")
+		},
+	}
+
+	fuzzy := core.NewFuzzy(repo, nil)
+	exists, err := fuzzy.UserExists(userEmail)
+
+	var expectedError error = nil
+	var expectedExists bool = false
+	if err != nil {
+		t.Fatalf("unexpected error, expected: %s, got: %s", expectedError, err)
+	}
+
+	if expectedExists != exists {
+		t.Fatalf("failed user exists, expected: %t, got: %t", expectedExists, exists)
+	}
 }
 
-info, err := f.prepareTokenInfo(dto)
-if err != nil {
-	return "", fmt.Errorf("prapare token info: %w", err)
+func Test_UserExists_Error(t *testing.T) {
+	userEmail := "test@test.com"
+	expectedError := errors.New("fake error")
+	repo := &repositoryMock{
+		getUser: func(email string) (model.User, error) {
+			if email == userEmail {
+				return model.User{}, expectedError
+			}
+			return model.User{}, errors.New("unexpected error")
+		},
+	}
+
+	fuzzy := core.NewFuzzy(repo, nil)
+	exists, err := fuzzy.UserExists(userEmail)
+
+	var expectedExists bool = false
+	if !errors.Is(err, expectedError) {
+		t.Fatalf("unexpected error, expected: %s, got: %s", expectedError, err)
+	}
+
+	if expectedExists != exists {
+		t.Fatalf("failed user exists, expected: %t, got: %t", expectedExists, exists)
+	}
 }
 
-token := f.jwtIssuer.Generate(&info)
-tokenStr, err := f.jwtIssuer.Sign(token)
-if err != nil {
-	return "", fmt.Errorf("token signing: %w", err)
-}
-return tokenStr, nil*/
+// func Test_LoginUser_Success(t *testing.T) {
 
-func Test_LoginUser_Success(t *testing.T) {
+// 	dto := model.LoginDTO{
+// 		Email:    "test@test.com",
+// 		Password: "testPass",
+// 	}
 
-}
+// 	expectedToken := "fake_token"
+
+// 	repoMock := &repositoryMock{
+// 		getUser: func(email string) (model.User, error) {
+// 			if email == dto.Email {
+// 				return model.User{
+// 					FirstName:    "Tanio",
+// 					LastName:     "Tanev",
+// 					Email:        dto.Email,
+// 					PasswordHash: "fake_pass_hash",
+// 				}, nil
+// 			}
+// 			return model.User{}, errors.New("unexpected error")
+// 		},
+// 	}
+
+// 	jwtMock := &jwtIssuerMock{
+// 		generate: func(ti *model.TokenInfo) *jwt.Token {
+
+// 			return nil
+// 		},
+// 		sign: func(token *jwt.Token) (string, error) {
+// 			bcrypt.
+// 			return expectedToken, nil
+// 		},
+// 	}
+
+// 	fuzzy := core.NewFuzzy(repoMock, jwtMock)
+
+// 	token, err := fuzzy.LoginUser(dto)
+// 	if err != nil {
+// 		t.Fatalf("unexpected error: %s", err)
+// 	}
+
+// 	if token != expectedToken {
+// 		t.Fatalf("token does not match, expected: %s, got: %s", expectedToken, token)
+// 	}
+// }
