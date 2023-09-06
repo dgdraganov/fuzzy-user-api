@@ -41,7 +41,9 @@ func (db *database) Migrate(dst ...interface{}) error {
 // Connect initializes a gorm.DB object and connects to the postgres db
 func (db *database) Connect() error {
 	dsn := db.buildDSN()
-	pgdb, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	pgdb, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+		TranslateError: true,
+	})
 	if err != nil {
 		return fmt.Errorf("gorm open connection: %w", err)
 	}

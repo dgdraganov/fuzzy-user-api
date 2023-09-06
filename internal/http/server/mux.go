@@ -63,8 +63,8 @@ func NewHTTPServer() *httpServer {
 	fuzz := core.NewFuzzy(db, tokenGenerator)
 
 	regHandler := register.NewRegisterHandler(logger, fuzz)
-	loginHandler := login.NewRegisterHandler(logger, fuzz)
-	verifyHandler := verify.NewRegisterHandler(logger, fuzz)
+	loginHandler := login.NewLoginHandler(logger, fuzz)
+	verifyHandler := verify.NewVerifyHandler(logger, fuzz)
 
 	return &httpServer{
 		mux:      http.NewServeMux(),

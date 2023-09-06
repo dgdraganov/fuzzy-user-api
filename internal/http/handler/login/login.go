@@ -18,7 +18,7 @@ type loginHandler struct {
 	registry Registry
 }
 
-func NewRegisterHandler(logger *zap.SugaredLogger, reg Registry) *loginHandler {
+func NewLoginHandler(logger *zap.SugaredLogger, reg Registry) *loginHandler {
 	return &loginHandler{
 		logs:     logger,
 		registry: reg,

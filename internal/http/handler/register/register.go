@@ -56,6 +56,35 @@ func (m *registerHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	userExists, err := m.registry.UserExists(dto.Email)
+	if err != nil {
+		m.logs.Errorw(
+			"failed getting user from db",
+			"error", err,
+			"request_id", requestID,
+		)
+		if err := common.WriteResponse(w, "something went wrong on our end", http.StatusInternalServerError); err != nil {
+			m.logs.Errorw(
+				"write response (get user failed)",
+				"error", err,
+				"request_id", requestID,
+			)
+		}
+		return
+	}
+
+	if userExists {
+		msg := fmt.Sprintf("user with email %s already exists", dto.Email)
+		if err := common.WriteResponse(w, msg, http.StatusOK); err != nil {
+			m.logs.Errorw(
+				"write response (get user failed)",
+				"error", err,
+				"request_id", requestID,
+			)
+		}
+		return
+	}
+
 	if err := m.registry.RegisterUser(dto); err != nil {
 		m.logs.Errorw(
 			"register user",

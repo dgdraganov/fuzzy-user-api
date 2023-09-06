@@ -1,5 +1,12 @@
 package core
 
+import (
+	"errors"
+	"fmt"
+
+	"gorm.io/gorm"
+)
+
 type fuzzy struct {
 	repo      Repository
 	jwtIssuer JwtIssuer
@@ -11,4 +18,15 @@ func NewFuzzy(db Repository, issuer JwtIssuer) *fuzzy {
 		repo:      db,
 		jwtIssuer: issuer,
 	}
+}
+
+func (f *fuzzy) UserExists(email string) (bool, error) {
+	_, err := f.repo.GetUser(email)
+	if errors.Is(err, gorm.ErrDuplicatedKey) {
+		return true, nil
+	}
+	if err != nil {
+		return false, fmt.Errorf("repo get user: %w", err)
+	}
+	return false, nil
 }

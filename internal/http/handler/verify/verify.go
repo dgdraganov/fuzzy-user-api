@@ -16,7 +16,7 @@ type verifyHandler struct {
 	registry Registry
 }
 
-func NewRegisterHandler(logger *zap.SugaredLogger, reg Registry) *verifyHandler {
+func NewVerifyHandler(logger *zap.SugaredLogger, reg Registry) *verifyHandler {
 	return &verifyHandler{
 		logs:     logger,
 		registry: reg,

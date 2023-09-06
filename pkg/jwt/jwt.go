@@ -49,8 +49,6 @@ func (gen *jwtGenerator) Sign(token *jwt.Token) (string, error) {
 }
 
 func (gen *jwtGenerator) Validate(token string) (jwt.MapClaims, error) {
-
-	fmt.Println(token)
 	jwtToken, err := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
