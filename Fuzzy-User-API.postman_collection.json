@@ -1,0 +1,91 @@
+{
+	"info": {
+		"_postman_id": "f0a5c48b-0ba1-45a4-a5a0-79d8c128bd8a",
+		"name": "Fuzzy-User-API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "6165361"
+	},
+	"item": [
+		{
+			"name": "localhost:9205/api/register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"penkfewrewro@mail.bg\",\n    \"first_name\": \"Gancho\",\n    \"last_name\": \"Vancho\",\n    \"password\": \"qwerty\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:9205/api/register",
+					"host": [
+						"localhost"
+					],
+					"port": "9205",
+					"path": [
+						"api",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login:9205/api/login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"alabala@mail.bg\",\n    \"password\": \"qwerty\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:9205/api/login",
+					"host": [
+						"localhost"
+					],
+					"port": "9205",
+					"path": [
+						"api",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:9205/api/verify",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "Authentication=eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImJiYkBtYWlsLmJnIiwiZXhwIjoxNjk0MDM1Mjg5LCJmaXJzdF9uYW1lIjoiR2FuY2hvIiwiaWF0IjoxNjkzOTQ4ODg5LCJsYXN0X25hbWUiOiJWYW5jaG8iLCJzdWIiOiJMb2dpbiJ9.OWX6vGiJeO4xHy1ID0esZU_UU0EbwQGH8RflZ6pHVMfPPA8xYGWcgxXvtFUcDAFyTwd1nSIVlwXtmDqUXaO8Pg; Path=/; Expires=Fri, 08 Sep 2023 09:21:29 GMT; HttpOnly",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "localhost:9205/api/verify",
+					"host": [
+						"localhost"
+					],
+					"port": "9205",
+					"path": [
+						"api",
+						"verify"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
