@@ -63,7 +63,6 @@ func Test_UserExists_True(t *testing.T) {
 		t.Fatalf("failed user exists, expected: %t, got: %t", expectedExists, exists)
 	}
 }
-
 func Test_UserExists_False(t *testing.T) {
 	userEmail := "test@test.com"
 	repo := &repositoryMock{
@@ -88,7 +87,6 @@ func Test_UserExists_False(t *testing.T) {
 		t.Fatalf("failed user exists, expected: %t, got: %t", expectedExists, exists)
 	}
 }
-
 func Test_UserExists_Error(t *testing.T) {
 	userEmail := "test@test.com"
 	expectedError := errors.New("fake error")
@@ -113,49 +111,109 @@ func Test_UserExists_Error(t *testing.T) {
 		t.Fatalf("failed user exists, expected: %t, got: %t", expectedExists, exists)
 	}
 }
+func Test_RegisterUser_Success(t *testing.T) {
+	dto := model.RegisterDTO{
+		FirstName: "Penko",
+		LastName:  "Penkov",
+		Email:     "test@gmail.com",
+		Password:  "testPass",
+	}
+	var expected error
 
-// func Test_LoginUser_Success(t *testing.T) {
+	repoMock := repositoryMock{
+		create: func(a any) error {
+			return nil
+		},
+	}
+	fuzzy := core.NewFuzzy(&repoMock, nil)
+	err := fuzzy.RegisterUser(dto)
 
-// 	dto := model.LoginDTO{
-// 		Email:    "test@test.com",
-// 		Password: "testPass",
-// 	}
+	if err != expected {
+		t.Fatalf("unexpected error, expected: %s, got: %s", expected, err)
+	}
+}
+func Test_RegisterUser_Failed(t *testing.T) {
+	dto := model.RegisterDTO{
+		FirstName: "Penko",
+		LastName:  "Penkov",
+		Email:     "test@gmainl.com",
+		Password:  "testPass",
+	}
 
-// 	expectedToken := "fake_token"
+	var expected error = errors.New("expected mock error")
+	repoMock := repositoryMock{
+		create: func(a any) error {
+			us, ok := a.(*model.User)
+			fmt.Println(us)
+			if ok && us.Email == dto.Email {
+				return expected
+			}
+			return errors.New("unexpected error")
+		},
+	}
 
-// 	repoMock := &repositoryMock{
-// 		getUser: func(email string) (model.User, error) {
-// 			if email == dto.Email {
-// 				return model.User{
-// 					FirstName:    "Tanio",
-// 					LastName:     "Tanev",
-// 					Email:        dto.Email,
-// 					PasswordHash: "fake_pass_hash",
-// 				}, nil
-// 			}
-// 			return model.User{}, errors.New("unexpected error")
-// 		},
-// 	}
+	fuzzy := core.NewFuzzy(&repoMock, nil)
+	err := fuzzy.RegisterUser(dto)
 
-// 	jwtMock := &jwtIssuerMock{
-// 		generate: func(ti *model.TokenInfo) *jwt.Token {
+	if !errors.Is(err, expected) {
+		t.Fatalf("unexpected error, expected: %s, got: %s", expected, err)
+	}
+}
 
-// 			return nil
-// 		},
-// 		sign: func(token *jwt.Token) (string, error) {
-// 			bcrypt.
-// 			return expectedToken, nil
-// 		},
-// 	}
+//	func (f *fuzzy) VerifyUser(jwtToken string) (map[string]any, error) {
+//		claims, err := f.jwtIssuer.Validate(jwtToken)
+//		if err != nil { return nil, fmt.Errorf("jwt validate: %w", err) }
+//		return map[string]any(claims), nil
+//	}
+func Test_VerifyUser_Success(t *testing.T) {
+	tokenMock := "fake_token"
+	expectedClaims := map[string]any{
+		"claim1": "value1",
+		"claim2": 2,
+	}
+	jwtMock := jwtIssuerMock{
+		validate: func(token string) (jwt.MapClaims, error) {
+			if token == tokenMock {
+				return expectedClaims, nil
+			}
+			return nil, errors.New("unexpected error")
+		},
+	}
 
-// 	fuzzy := core.NewFuzzy(repoMock, jwtMock)
+	fuzzyMock := core.NewFuzzy(nil, &jwtMock)
 
-// 	token, err := fuzzy.LoginUser(dto)
-// 	if err != nil {
-// 		t.Fatalf("unexpected error: %s", err)
-// 	}
+	claims, err := fuzzyMock.VerifyUser(tokenMock)
+	var expected error
+	if err != expected {
+		t.Fatalf("unexpected error, expected: %s, got: %s", expected, err)
+	}
 
-// 	if token != expectedToken {
-// 		t.Fatalf("token does not match, expected: %s, got: %s", expectedToken, token)
-// 	}
-// }
+	if len(claims) != len(expectedClaims) {
+		t.Fatalf("unexpected claims len, expected: %d, got: %d", len(expectedClaims), len(claims))
+	}
+
+	for k, v := range claims {
+		if expectedClaims[k] != v {
+			t.Fatalf("unexpected claim, expected: %s, got: %s", expected, err)
+		}
+	}
+}
+func Test_VerifyUser_Failed(t *testing.T) {
+	tokenMock := "fake_token"
+	expectedError := errors.New("unexpected error")
+	jwtMock := jwtIssuerMock{
+		validate: func(token string) (jwt.MapClaims, error) {
+			if token == tokenMock {
+				return nil, expectedError
+			}
+			return nil, nil
+		},
+	}
+
+	fuzzyMock := core.NewFuzzy(nil, &jwtMock)
+
+	_, err := fuzzyMock.VerifyUser(tokenMock)
+	if !errors.Is(err, expectedError) {
+		t.Fatalf("unexpected error, expected: %s, got: %s", expectedError, err)
+	}
+}

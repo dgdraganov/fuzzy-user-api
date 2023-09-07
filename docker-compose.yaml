@@ -1,63 +1,37 @@
 version: '3.3'
 
-# Define services
 services:
   db:
     image: postgres:14.1-alpine
     restart: always
     container_name: database
-    environment:
-      - POSTGRES_USER=fuzzy #also the default db
-      - POSTGRES_PASSWORD=postgres
+    env_file:
+      - dev.env
     ports:
       - '5432:5432'
     volumes: 
       - db:/var/lib/postgresql/data
-  # user-api:    # App Service
-  #   container_name: fuzzy-user-api
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
+    user-api:   
+      container_name: fuzzy-user-api
+      build:
+        context: .
+        dockerfile: Dockerfile
+      ports:
+        - "9205:9205" 
+      restart: unless-stopped
+      env_file:
+        - dev.env
+  # testing:
+  #   working_dir: /app
+  #   image: golang:1.21
   #   ports:
-  #     - "9205:9205" 
-  #   restart: unless-stopped
+  #     - "9205:9205"
+  #   tty: true
+  #   container_name: fuzzy_testing
+  #   volumes: 
+  #     - ./:/app
   #   env_file:
   #     - dev.env
-    # environment: 
-    #   APP_ENV: DEV
-    #   APP_PORT: 9205
-    #   DB_HOST: db 
-    #   DB_USER: fuzzy 
-    #   DB_PASSWORD: postgres 
-    #   DB_NAME: fuzzy
-    #   DB_PORT: 5432 
-    #   DB_SSL_MODE: disable 
-    #   DB_TIME_ZONE: Europe/Sofia
-    #   JWT_LOGIN_EXP: 60
-    #   JWT_SECRET: this_is_secret
-    # networks: 
-    #   - backend
-  testing:
-    working_dir: /app
-    image: golang:1.21
-    ports:
-      - "9205:9205"
-    tty: true
-    container_name: fuzzy_testing
-    volumes: 
-      - ./:/app
-    environment: 
-      APP_ENV: DEV
-      APP_PORT: 9205
-      DB_HOST: db 
-      DB_USER: fuzzy 
-      DB_PASSWORD: postgres 
-      DB_NAME: fuzzy
-      DB_PORT: 5432 
-      DB_SSL_MODE: disable 
-      DB_TIME_ZONE: Europe/Sofia
-      JWT_LOGIN_EXP: 60
-      JWT_SECRET: this_is_secret
 volumes:
   db:
     driver: local
