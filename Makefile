@@ -1,11 +1,11 @@
-include .env
+include dev.env
 export
 
 compose:
 	docker-compose up --detach --build
 
 tests:
-	go test -v ./...
+	go test ./...
 
 decompose:
 	docker-compose down

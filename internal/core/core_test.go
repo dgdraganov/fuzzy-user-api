@@ -144,7 +144,6 @@ func Test_RegisterUser_Failed(t *testing.T) {
 	repoMock := repositoryMock{
 		create: func(a any) error {
 			us, ok := a.(*model.User)
-			fmt.Println(us)
 			if ok && us.Email == dto.Email {
 				return expected
 			}
@@ -160,11 +159,6 @@ func Test_RegisterUser_Failed(t *testing.T) {
 	}
 }
 
-//	func (f *fuzzy) VerifyUser(jwtToken string) (map[string]any, error) {
-//		claims, err := f.jwtIssuer.Validate(jwtToken)
-//		if err != nil { return nil, fmt.Errorf("jwt validate: %w", err) }
-//		return map[string]any(claims), nil
-//	}
 func Test_VerifyUser_Success(t *testing.T) {
 	tokenMock := "fake_token"
 	expectedClaims := map[string]any{

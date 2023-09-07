@@ -13,7 +13,9 @@ func WriteResponse(w http.ResponseWriter, message string, statusCode int) error 
 	resp, err := json.Marshal(respMsg)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("Something went wrong!"))
+		if _, err := w.Write([]byte("Something went wrong!")); err != nil {
+			return fmt.Errorf("response write: %w", err)
+		}
 		return fmt.Errorf("json marshal: %w", err)
 	}
 	w.WriteHeader(statusCode)
