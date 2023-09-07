@@ -4,7 +4,7 @@ export
 compose:
 	docker-compose up --detach --build
 
-test:
+tests:
 	go test -v ./...
 
 decompose:
